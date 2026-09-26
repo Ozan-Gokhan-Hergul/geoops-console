@@ -21,9 +21,28 @@ data-engineering work, built on synthetic/public data only.
   auto-retry. Dev-only Vite proxy to the backend, no CORS/auth changes to
   the backend. Unit tests for the pure request-building/formatting logic.
 
-- **Milestone 3+:** Not yet scoped. Do not start without explicit approval.
+- **Milestone 3 (done): Release preparation.** Documentation-and-planning
+  milestone, no functional changes. Rewrote `README.md` for a public
+  portfolio audience (what it demonstrates, stack/architecture, project
+  structure, exact commands, limitations, AI-assisted development
+  disclosure); added `docs/screenshots/` with capture instructions (no
+  screenshots invented); reviewed repo hygiene, `.gitignore`/`.dockerignore`,
+  Docker config and the frontend's dev-only API proxy (no secrets found, no
+  functional defects — see `DECISIONS.md`); produced a deployment
+  recommendation (not yet provisioned).
+
+- **Milestone 4 (planned, not started): Deployment.** Ship the reviewed
+  recommendation from Milestone 3: same-origin hosting of the Fastify
+  backend plus the built frontend behind a single reverse proxy with
+  automatic HTTPS (see `DECISIONS.md` for the comparison against a split
+  static-host + API-host approach). Requires explicit approval before any
+  provisioning; must not touch the user's existing private VPS/WireGuard
+  setup, and must not introduce paid services without asking first.
 
 ## Non-goals (for now)
 
-- Database, authentication, Redis, message queues, microservices, deployment.
+- Database, authentication, Redis, message queues, microservices, batch
+  enrichment, PostGIS, a UI framework, or auth of any kind.
+- Any paid service, and any change to the user's existing private VPS or
+  WireGuard setup.
 - Any dependency on the user's employer's code, data, or infrastructure.
