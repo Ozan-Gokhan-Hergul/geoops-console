@@ -21,9 +21,7 @@ const overpassLimiter = new ConcurrencyLimiter(CONFIG.overpassConcurrency);
 
 function cacheKey(params: EnrichParams): string {
   const categories = (params.categories ?? [...POI_CATEGORIES]).slice().sort().join(",");
-  const lat = params.latitude.toFixed(5);
-  const lon = params.longitude.toFixed(5);
-  return `${lat}:${lon}:${params.radiusMeters}:${categories}`;
+  return `${params.latitude}:${params.longitude}:${params.radiusMeters}:${categories}`;
 }
 
 export async function enrichLocation(params: EnrichParams): Promise<EnrichResult> {
