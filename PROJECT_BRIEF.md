@@ -3,6 +3,9 @@
 GeoOps Console is a public portfolio demo showcasing backend, geospatial and
 data-engineering work, built on synthetic/public data only.
 
+**Live**: [geoops.ozanhergul.com.tr](https://geoops.ozanhergul.com.tr/)
+(Cloudflare Workers, HTTPS, deployed under Milestone 4).
+
 ## Milestones
 
 - **Milestone 1 (done):** Location-enrichment backend. `POST /api/enrich`
@@ -31,18 +34,32 @@ data-engineering work, built on synthetic/public data only.
   functional defects — see `DECISIONS.md`); produced a deployment
   recommendation (not yet provisioned).
 
-- **Milestone 4 (planned, not started): Deployment.** Ship the reviewed
-  recommendation from Milestone 3: same-origin hosting of the Fastify
-  backend plus the built frontend behind a single reverse proxy with
-  automatic HTTPS (see `DECISIONS.md` for the comparison against a split
-  static-host + API-host approach). Requires explicit approval before any
-  provisioning; must not touch the user's existing private VPS/WireGuard
-  setup, and must not introduce paid services without asking first.
+- **Milestone 4 (done): Cloudflare Workers deployment.** Supersedes
+  Milestone 3's VPS-reverse-proxy sketch — deployed to a separate Cloudflare
+  Workers project (`geoops.ozanhergul.com.tr`), distinct from the existing
+  `ozanhergul.com.tr` Workers Static Assets site, which was not touched.
+  Verified against official docs (not assumed) that Fastify is not
+  supported on Workers; built a small native `fetch` adapter
+  (`worker/index.ts`) that reuses the existing validation/query/
+  normalization/cache/concurrency logic from `src/` unmodified, with
+  Workers Static Assets serving `frontend/dist`. Compatibility was verified
+  locally with `wrangler dev` against the real Workers runtime (workerd)
+  before deployment. The user then provisioned the Worker, DNS, and ran the
+  deploy themselves (`wrangler login` + `wrangler deploy` are manual,
+  account-holder actions never performed by the assistant). Confirmed
+  working live over HTTPS, including mobile layout and real POI
+  enrichment. The Node/Fastify/Docker path is untouched and remains the
+  default for local development. See `DECISIONS.md` for the full
+  compatibility rationale and citations.
+
+- **Milestone 5 (planned, not started):** Not yet scoped. Do not start
+  without explicit approval.
 
 ## Non-goals (for now)
 
 - Database, authentication, Redis, message queues, microservices, batch
   enrichment, PostGIS, a UI framework, or auth of any kind.
-- Any paid service, and any change to the user's existing private VPS or
-  WireGuard setup.
+- Any paid service, and any change to the user's existing private VPS,
+  WireGuard setup, or the existing `ozanhergul.com.tr` Cloudflare Workers
+  site.
 - Any dependency on the user's employer's code, data, or infrastructure.

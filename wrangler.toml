@@ -1,0 +1,37 @@
+name = "geoops-console"
+main = "worker/index.ts"
+compatibility_date = "2025-06-01"
+
+# Workers Logs: request metadata + whatever worker/index.ts explicitly logs
+# (nothing, today — see worker/index.ts and DECISIONS.md). Never log request
+# bodies/coordinates/PII/credentials/full Overpass responses. Tracing left
+# off; no external monitoring service added. Free on both Free and Paid
+# Workers plans (verified against the installed Wrangler's own config
+# schema: node_modules/wrangler/config-schema.json).
+[observability]
+enabled = true
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+
+[observability.traces]
+enabled = false
+
+# No nodejs_compat flag: worker/index.ts and everything it reuses from src/
+# (schema.ts, enrichService.ts, osm/*, cache.ts, concurrencyLimiter.ts) use
+# only Web-standard APIs (fetch, AbortController, Promise, Map) that Workers
+# supports natively — keeps the bundle smaller and avoids polyfill overhead
+# against the Free plan's 10ms CPU / 64MiB script-size budget.
+
+# Static frontend build. Requests that don't match a built asset fall
+# through to this Worker automatically (default Workers-with-assets
+# behavior) — this is how /api/* and /health reach the fetch handler above
+# without any extra routing config. Run `npm run build` in frontend/ first.
+[assets]
+directory = "./frontend/dist"
+
+# Uncomment to point at a non-default Overpass endpoint (matches src/config.ts's
+# OVERPASS_URL override, applied by worker/index.ts on first request):
+# [vars]
+# OVERPASS_URL = "https://overpass-api.de/api/interpreter"

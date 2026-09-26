@@ -10,7 +10,8 @@ logic from the user's employer.
 - Simple, maintainable code; lightweight dependencies.
 - Ask before major architectural decisions, destructive actions, paid services,
   or creating cloud resources.
-- Do not modify the user's existing WireGuard setup or remote server.
+- Do not modify the user's existing WireGuard setup or remote server, or
+  the existing `ozanhergul.com.tr` Cloudflare Workers site.
 - See `PROJECT_BRIEF.md` for scope/roadmap and `DECISIONS.md` for the log of
   decisions that matter.
 
@@ -21,6 +22,12 @@ logic from the user's employer.
 - **Frontend (Milestone 2)**: Vite + vanilla TypeScript + Leaflet, in
   `frontend/` as an independent project. No React/Angular, no new backend
   architecture — talks to the existing `/api/enrich` via a Vite dev proxy.
+- **Cloudflare Workers adapter (Milestone 4A, experimental)**: `worker/`
+  reuses `src/schema.ts`/`enrichService.ts`/`osm/*`/`cache.ts`/
+  `concurrencyLimiter.ts` directly (all Web-standard, no Node APIs) behind a
+  small native `fetch` handler instead of Fastify, which Cloudflare does not
+  yet support. Kept alongside, not instead of, the Node/Fastify backend.
+  Nothing deployed — see `DECISIONS.md` before doing so.
 
 ## Commands
 
@@ -38,4 +45,12 @@ Frontend (`frontend/`):
 npm run dev     # Vite dev server on :5173, proxies /api to :3000
 npm run build   # tsc --noEmit + vite build
 npm test        # vitest run
+```
+
+Cloudflare Workers (repo root, after `frontend && npm run build`):
+
+```bash
+npm run cf:typecheck   # tsc -p worker/tsconfig.json
+npm run cf:dev         # wrangler dev — local workerd runtime, no deploy
+npm run cf:deploy      # wrangler deploy — NOT to be run without explicit approval
 ```
