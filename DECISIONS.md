@@ -12,8 +12,8 @@
   Nodes use exact coordinates; ways/relations use their returned centroid and
   are flagged `approximate: true` since a centroid isn't the true nearest
   point on the geometry.
-- **Cache**: simple in-process `Map`-based TTL cache (10 min), keyed on
-  rounded coordinates + radius + sorted category list. No Redis — out of
+- **Cache**: simple in-process `Map`-based TTL cache (10 min), keyed on exact 
+  validated coordinates + radius + sorted category list. No Redis — out of 
   scope for Milestone 1.
 - **Rate limiting**: `@fastify/rate-limit`, 20 req/min per instance, to avoid
   hammering the public Overpass instance (no guaranteed quota).
