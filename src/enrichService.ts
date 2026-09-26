@@ -1,5 +1,6 @@
 import { TtlCache } from "./cache.js";
 import { CONFIG } from "./config.js";
+import { ConcurrencyLimiter } from "./concurrencyLimiter.js";
 import { POI_CATEGORIES, type PoiCategory } from "./osm/categories.js";
 import { normalizeAndRank, type NormalizedPoi } from "./osm/normalize.js";
 import { buildOverpassQuery, queryOverpass } from "./osm/overpass.js";
@@ -16,6 +17,7 @@ export interface EnrichResult {
 }
 
 const cache = new TtlCache<EnrichResult>(CONFIG.cacheTtlMs);
+const overpassLimiter = new ConcurrencyLimiter(CONFIG.overpassConcurrency);
 
 function cacheKey(params: EnrichParams): string {
   const categories = (params.categories ?? [...POI_CATEGORIES]).slice().sort().join(",");
@@ -31,7 +33,7 @@ export async function enrichLocation(params: EnrichParams): Promise<EnrichResult
 
   const categories = params.categories ?? [...POI_CATEGORIES];
   const query = buildOverpassQuery(params.latitude, params.longitude, params.radiusMeters, categories);
-  const response = await queryOverpass(query);
+  const response = await overpassLimiter.run(() => queryOverpass(query));
   const pois = normalizeAndRank(
     response.elements,
     params.latitude,

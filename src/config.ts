@@ -10,4 +10,5 @@ export const CONFIG = {
     max: 20,
     timeWindowMs: 60 * 1000,
   },
+  overpassConcurrency: 2,
 };

@@ -30,6 +30,8 @@ docker compose up --build
 
 ## Example request
 
+Coordinates below are Sultanahmet, Istanbul:
+
 ```bash
 curl -X POST http://localhost:3000/api/enrich \
   -H "Content-Type: application/json" \
@@ -79,8 +81,11 @@ Example response:
   returned.
 - Responses are cached in-memory for 10 minutes per (coordinate, radius,
   categories) key to reduce load on the public Overpass instance.
-- Requests to `/api/enrich` are rate-limited (20 requests/minute by default)
-  and Overpass calls have an 8-second timeout.
+- Requests to `/api/enrich` are rate-limited (20 requests/minute by default);
+  this protects the service from inbound abuse and is separate from outbound
+  politeness towards Overpass. Outbound Overpass calls are additionally capped
+  at 2 concurrent requests application-wide, and each call has an 8-second
+  timeout.
 
 ## Limitations
 
