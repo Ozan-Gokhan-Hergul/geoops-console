@@ -34,10 +34,10 @@ docker compose up --build
 curl -X POST http://localhost:3000/api/enrich \
   -H "Content-Type: application/json" \
   -d '{
-    "latitude": 52.5200,
-    "longitude": 13.4050,
+    "latitude": 41.008241,
+    "longitude": 28.973577,
     "radiusMeters": 200,
-    "categories": ["pharmacy", "supermarket"]
+    "categories": ["pharmacy", "supermarket", "convenience", "bank"]
   }'
 ```
 
@@ -51,8 +51,8 @@ Example response:
       "osmId": 123456789,
       "category": "pharmacy",
       "name": "Example Pharmacy",
-      "latitude": 52.5201,
-      "longitude": 13.4052,
+      "latitude": 41.008241,
+      "longitude": 28.973577,
       "distanceMeters": 24,
       "source": "openstreetmap",
       "approximate": false

@@ -57,7 +57,12 @@ export async function queryOverpass(query: string): Promise<OverpassResponse> {
   try {
     const response = await fetch(CONFIG.overpassUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept": "application/json",
+        "User-Agent": "GeoOpsConsoleDemo/0.1 (https://ozanhergul.com.tr)",
+        "Referer": "https://ozanhergul.com.tr/"
+      },
       body: `data=${encodeURIComponent(query)}`,
       signal: controller.signal,
     });
