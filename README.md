@@ -232,19 +232,30 @@ as part of any automated build/test command in this repo).
 invocation (method, path, status, duration, CPU time) for viewing in the
 Cloudflare dashboard under **Workers & Pages → geoops-console → Logs**.
 `[observability.traces] enabled = false` — tracing is off; no external
-monitoring/APM service was added. `worker/index.ts` itself does not call
-`console.log` anywhere, so nothing beyond the platform's own automatic
-invocation metadata is captured — **no request bodies, coordinates,
-personal information, credentials, or full Overpass responses are logged.**
+monitoring/APM service was added.
+
+Two distinct things are worth separating here: **application-level
+logging** and **Cloudflare's platform invocation metadata** are not the
+same thing. `worker/index.ts` contains no `console.log` calls at all — the
+application itself logs nothing. Separately, and regardless of that,
+Cloudflare's platform automatically records invocation metadata (method,
+path, status, duration, CPU time) for every request whenever Workers Logs
+is enabled — that automatic record is what appears in the dashboard, not
+anything the application code emits. Combined, this means **no request
+bodies, coordinates, personal information, credentials, or full Overpass
+responses are logged**, by either mechanism.
 
 ### Free-plan limits and caveats (verified, not assumed)
 
 - **10ms CPU time per request** on Workers Free (confirmed via Cloudflare's
   own limits page). CPU time excludes time spent waiting on `fetch()` —
   which is most of this handler's wall-clock time — so JSON parsing, zod
-  validation, and normalization are the only real CPU cost, and fit
-  comfortably. Not independently benchmarked in production; monitor via
-  Workers Logs (above).
+  validation, and normalization are the only real CPU cost. Given how
+  little of that there is, this is *expected* to fit comfortably within
+  10ms — but that is a reasoned expectation based on the code's shape, not
+  a measured guarantee: it has **not been independently benchmarked in
+  production**. If this ever becomes a concern, Workers Logs (above)
+  reports per-invocation CPU time and is the way to check.
 - **In-memory cache, rate limiting, and outbound concurrency are scoped to a
   single Worker isolate — they are NOT globally shared or distributed
   across instances.** Cloudflare may run multiple isolates for the same

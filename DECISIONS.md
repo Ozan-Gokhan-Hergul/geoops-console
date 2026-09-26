@@ -195,9 +195,10 @@ finalization pass done afterward — no application code changed.
   performance numbers, uptime figures, or traffic statistics were invented
   anywhere — none exist yet to report.
 - **Portfolio case study**: added `docs/PORTFOLIO_CASE_STUDY.md` with
-  ready-to-use copy for the personal site. The personal website's source
-  (`D:\OzanHergulWS\website`) was inspected read-only (a single static
-  `index.html`/`styles.css`, no framework, no existing "Projects" section —
+  ready-to-use copy for the personal site. The personal website's source (a
+  separate local repository, outside this one) was inspected read-only (a
+  single static `index.html`/`styles.css`, no framework, no existing
+  "Projects" section —
   see its own `CLAUDE.md` for its constraints: static Cloudflare Pages
   hosting, no backend, minimal dependencies). Proposed the smallest
   consistent integration — a new `<section id="projects">` between the

@@ -89,8 +89,8 @@ logic.
 
 ## Integration notes (not for direct publication — read before wiring in)
 
-**Website source inspected** at `D:\OzanHergulWS\website` (read-only; no
-files there were changed). Findings:
+**Website source inspected**, in a separate local repository outside this
+one (read-only at first; see update below). Findings:
 
 - It's a single static page: `index.html` + `styles.css`, no framework, no
   build step, no content-collection/CMS pattern to slot into. Hosted on
@@ -99,10 +99,15 @@ files there were changed). Findings:
 - Current sections in order: `#hero` → `#services` (a grid of
   `.service-card` divs, one of which is literally *"Geospatial Applications
   & Data Visualization... using Leaflet"*) → `#experience` → `#contact`.
-  There is **no existing "Projects"/"Portfolio"/"Case Studies" section**.
+  There was **no existing "Projects"/"Portfolio"/"Case Studies" section**.
 
-**Smallest consistent integration** (proposed, not implemented): add one
-new section between `#services` and `#experience`:
+**Update — implemented**: a `<section id="projects">` was added between
+`#services` and `#experience`, with one `.project-card` matching the
+existing `.service-card` markup/visual language, and the same screenshot
+used above (resized/compressed for web) copied into that project's own
+assets directory. That change lives entirely in the website's own
+repository, not here, and is still pending its owner's review and approval
+before being published. The original proposal, for reference:
 
 ```html
 <section id="projects" class="projects">
@@ -123,6 +128,6 @@ stylable with a `.project-card` rule that's a close variant of the existing
 need copying to the website's own `assets/` directory (its image host is
 separate from this repo).
 
-This integration was **not implemented** — the task boundary was explicit
-that the personal website must not be changed or deployed without your
-separate approval. Say the word and it's a small, contained change.
+As noted above, this has since been implemented (see the website's own
+repository/diff) but not deployed or published — that still requires your
+separate review and approval there.
