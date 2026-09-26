@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { CONFIG } from "../src/config.js";
 import { buildOverpassQuery, OverpassError, queryOverpass } from "../src/osm/overpass.js";
 
 describe("buildOverpassQuery", () => {
@@ -56,5 +57,32 @@ describe("queryOverpass", () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(abortError));
 
     await expect(queryOverpass("dummy query")).rejects.toBeInstanceOf(OverpassError);
+  });
+
+  it("sends a POST request with a URL-encoded body and identifying headers", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ elements: [] }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const query = buildOverpassQuery(52.52, 13.405, 50, ["pharmacy"]);
+    await queryOverpass(query);
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, options] = fetchMock.mock.calls[0] as [string, RequestInit];
+
+    expect(url).toBe(CONFIG.overpassUrl);
+    expect(options.method).toBe("POST");
+
+    const body = options.body as string;
+    expect(body).toBe(`data=${encodeURIComponent(query)}`);
+    expect(decodeURIComponent(body.slice("data=".length))).toBe(query);
+
+    const headers = options.headers as Record<string, string>;
+    expect(headers["Content-Type"]).toBe("application/x-www-form-urlencoded");
+    expect(headers["Accept"]).toBe("application/json");
+    expect(headers["User-Agent"]).toBeTruthy();
+    expect(headers["User-Agent"]).toMatch(/GeoOpsConsoleDemo/);
   });
 });

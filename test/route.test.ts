@@ -97,4 +97,38 @@ describe("POST /api/enrich", () => {
     expect(second.statusCode).toBe(200);
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
+
+  it("does not conflate distinct coordinates that previously rounded to the same cache key", async () => {
+    // Both values round to the same 5-decimal string ("50.00000") but are
+    // distinct, real coordinates a few metres apart.
+    const latA = 50.000001;
+    const latB = 50.000004;
+    expect(latA.toFixed(5)).toBe(latB.toFixed(5));
+    expect(latA).not.toBe(latB);
+
+    const fetchMock = vi.fn().mockImplementation(async (_url: string, options: RequestInit) => {
+      const body = options.body as string;
+      const elements = body.includes(String(latA))
+        ? [{ type: "node", id: 101, lat: latA, lon: 60, tags: { amenity: "pharmacy", name: "Near A" } }]
+        : [{ type: "node", id: 102, lat: latB, lon: 60, tags: { amenity: "pharmacy", name: "Near B" } }];
+      return { ok: true, json: async () => ({ elements }) };
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const basePayload = { longitude: 60, radiusMeters: 50, categories: ["pharmacy"] };
+    const first = await app.inject({
+      method: "POST",
+      url: "/api/enrich",
+      payload: { latitude: latA, ...basePayload },
+    });
+    const second = await app.inject({
+      method: "POST",
+      url: "/api/enrich",
+      payload: { latitude: latB, ...basePayload },
+    });
+
+    expect(first.json().pois[0].name).toBe("Near A");
+    expect(second.json().pois[0].name).toBe("Near B");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
 });
