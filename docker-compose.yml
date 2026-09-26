@@ -1,0 +1,9 @@
+services:
+  geoops-console:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - HOST=0.0.0.0
+      - OVERPASS_URL=https://overpass-api.de/api/interpreter
