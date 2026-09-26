@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GeoOps Console</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="app-header">
+        <h1>GeoOps Console</h1>
+        <p>Click the map to pick a location, choose categories and a radius, then press Search.</p>
+      </header>
+      <div class="layout">
+        <div id="map"></div>
+        <aside class="panel">
+          <form id="search-form">
+            <div class="field">
+              <label for="radius">Radius (meters, max 1000)</label>
+              <input id="radius" name="radius" type="number" min="1" max="1000" value="50" />
+            </div>
+            <fieldset id="categories">
+              <legend>Categories</legend>
+              <label><input type="checkbox" name="category" value="pharmacy" checked /> Pharmacy</label>
+              <label><input type="checkbox" name="category" value="bank" checked /> Bank</label>
+              <label><input type="checkbox" name="category" value="dentist" checked /> Dentist</label>
+              <label><input type="checkbox" name="category" value="supermarket" checked /> Supermarket</label>
+              <label><input type="checkbox" name="category" value="convenience" checked /> Convenience</label>
+            </fieldset>
+            <p id="selection-status" class="hint">No location selected — click the map.</p>
+            <button id="search-button" type="submit" disabled>Search</button>
+          </form>
+          <div id="result-status" class="status" role="status" aria-live="polite"></div>
+          <ul id="result-list"></ul>
+          <p class="attribution">© OpenStreetMap contributors</p>
+        </aside>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

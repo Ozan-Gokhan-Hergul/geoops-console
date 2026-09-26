@@ -1,9 +1,11 @@
 # GeoOps Console
 
-A small location-enrichment backend demo. Given a coordinate, it queries the
+A small location-enrichment demo. Given a coordinate, the backend queries the
 public [OpenStreetMap Overpass API](https://overpass-api.de/) for nearby
 points of interest (pharmacy, bank, dentist, supermarket, convenience) and
-returns the three closest matches with normalized fields and distances.
+returns the three closest matches with normalized fields and distances. A
+minimal map-based frontend (Vite + vanilla TypeScript + Leaflet) lets you
+pick a point on the map and run searches interactively.
 
 This is a portfolio demo. It uses only public OpenStreetMap data — no
 proprietary datasets, credentials, or business logic.
@@ -11,9 +13,9 @@ proprietary datasets, credentials, or business logic.
 ## Requirements
 
 - Node.js 20+
-- Docker (optional, for containerized local dev)
+- Docker (optional, for containerized local backend dev)
 
-## Local setup
+## Backend setup
 
 ```bash
 npm install
@@ -26,6 +28,32 @@ Or with Docker:
 
 ```bash
 docker compose up --build
+```
+
+## Frontend setup
+
+The frontend is a separate project in [`frontend/`](frontend). With the
+backend running on `http://localhost:3000` (see above):
+
+```bash
+cd frontend
+npm install
+npm run dev   # opens the UI on http://localhost:5173
+```
+
+The Vite dev server proxies `/api/*` requests to `http://localhost:3000`
+(configured in `frontend/vite.config.ts`), so the browser only ever talks to
+its own origin — no CORS setup or API key needed. To point the built
+frontend at a different backend origin, set `VITE_API_BASE_URL` at build
+time (`frontend/.env` or the shell environment); by default it uses relative
+URLs.
+
+Click the map to select a location, adjust the radius/categories, and press
+**Search**. Other useful commands:
+
+```bash
+npm run build    # type-check + production build to frontend/dist
+npm test         # unit tests for the request/formatting logic
 ```
 
 ## Example request
@@ -96,9 +124,12 @@ Example response:
 - The in-memory cache and rate limiter are per-process and reset on restart —
   fine for a single-instance demo, not for horizontal scaling.
 - Way/relation coordinates and distances are centroid-based approximations,
-  not true nearest-edge distances.
-- No database, authentication, or frontend — this milestone is the enrichment
-  API only.
+  not true nearest-edge distances (the frontend marks these as "approximate
+  centroid" in both the map markers and the result list).
+- No database, authentication, deployment or CORS configuration — the
+  frontend's dev proxy only covers local Vite development. No auto-retry
+  against Overpass; if it's unavailable, the UI surfaces that and waits for
+  you to press Search again.
 
 ## Attribution
 

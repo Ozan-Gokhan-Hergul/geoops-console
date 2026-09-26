@@ -14,15 +14,28 @@ logic from the user's employer.
 - See `PROJECT_BRIEF.md` for scope/roadmap and `DECISIONS.md` for the log of
   decisions that matter.
 
-## Stack (Milestone 1)
+## Stack
 
-Node.js LTS + TypeScript, Fastify, Docker/Docker Compose. No database, auth,
-frontend, Redis, queue, or microservices yet.
+- **Backend (Milestone 1)**: Node.js LTS + TypeScript, Fastify,
+  Docker/Docker Compose. No database, auth, Redis, queue, or microservices.
+- **Frontend (Milestone 2)**: Vite + vanilla TypeScript + Leaflet, in
+  `frontend/` as an independent project. No React/Angular, no new backend
+  architecture — talks to the existing `/api/enrich` via a Vite dev proxy.
 
 ## Commands
+
+Backend (repo root):
 
 ```bash
 npm run build   # tsc
 npm test        # vitest run
 npm run dev     # tsx watch src/server.ts
+```
+
+Frontend (`frontend/`):
+
+```bash
+npm run dev     # Vite dev server on :5173, proxies /api to :3000
+npm run build   # tsc --noEmit + vite build
+npm test        # vitest run
 ```
